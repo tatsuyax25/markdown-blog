@@ -6,6 +6,7 @@ app.set('view engine', 'ejs')
 
 app.use('/articles', articleRouter)
 
+// Get the articles to show on the website.
 app.get('/', (req, res) => {
     const articles = [{
         title: 'Test Article',
