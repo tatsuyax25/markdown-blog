@@ -8,7 +8,7 @@ router.get('/new', (req, res) => {
 
 router.get('/edit/:id', async (req, res) => {
     const article = await Article.findById(req.params.id)
-    res.render('artcles/edit', { article: article })
+    res.render('articles/edit', { article: article })
 })
 
 router.get('/:slug', async (req, res) => {
@@ -22,9 +22,10 @@ router.post('/', async (req, res, next) => {
     next()
 }, saveArticleAndRedirect('new'))
 
-router.put('/:id', (req,res) => {
-
-})
+router.put('/:id', async (req, res, next) => {
+    req.article = await Article.findById(req.params.id)
+    next()
+}, saveArticleAndRedirect('edit'))
 
 router.delete('/:id', async (req, res) => {
     await Article.findByIdAndDelete(req.params.id)
@@ -32,11 +33,11 @@ router.delete('/:id', async (req, res) => {
 })
 
 function saveArticleAndRedirect(path) {
-    return (req, res) => {
-        let article = req.article 
-            article.title = req.body.title
-            article.description = req.body.description
-            article.markdown = req.body.markdown
+    return async (req, res) => {
+        let article = req.article
+        article.title = req.body.title
+        article.description = req.body.description
+        article.markdown = req.body.markdown
         try {
             article = await article.save()
             res.redirect(`/articles/${article.slug}`)
